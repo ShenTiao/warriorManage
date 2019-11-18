@@ -7,5 +7,5 @@
 该程序参考了Minoyu的stuManage**  
 
 ####已知BUG  
-**力量排序无限循环  
-**warData.txt指针越界  
+**力量排序无限循环**  
+**warData.txt指针越界**  
