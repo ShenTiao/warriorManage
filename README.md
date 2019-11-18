@@ -4,4 +4,4 @@
 #### * 下载到本地后自行导入项目编译运行即可  
 
 **感谢  
-该程序参考了Minoyu的stuManage  
+该程序参考了Minoyu的stuManage** 
