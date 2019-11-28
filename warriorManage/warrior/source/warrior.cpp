@@ -66,7 +66,7 @@ void warrior::readFile(istream& in){
 
 //输出
 void warrior::display() {
-	cout << name << " " << age << " " << phy << " " << intel << " " << str << endl;
+	cout << name << "\t" << age << "\t" << phy << "\t" << intel << "\t" << str << endl;
 }
 
 //与传入对象交换信息 用于简单排序法时交换
@@ -105,12 +105,14 @@ warriorList::warriorList() {
 			if (last->name[0] != NULL) {
 				last->next = new warrior;
 				last = last->next;
+				num++;
 			}
 		}
 		//删除空节点
 		war.removeLast();
 		in.close();
 		cout << "读取武将信息成功";
+		cout << endl;
 		printShortStar();
 		cout << endl;
 	}
@@ -124,7 +126,7 @@ void warriorList::add() {
 	while (p) {
 		if (p->name == t->name) {
 			printItemDot();
-			cout << "武将已存在";
+			cout << "武将已存在" << endl;
 			return;
 		}
 		p = p->next;
@@ -133,7 +135,7 @@ void warriorList::add() {
 	if (first == NULL)
 	{
 		first = last = t;
-		cout << "武将创建成功";
+		cout << "武将创建成功" << endl;
 		printShortStar();
 		cout << endl;
 		printWarriorTitle();
@@ -143,7 +145,7 @@ void warriorList::add() {
 	else {
 		last->next = t;
 		last = last->next;
-		cout << "武将创建成功";
+		cout << "武将创建成功" << endl;
 		printShortStar();
 		cout << endl;
 		printWarriorTitle();
@@ -183,6 +185,7 @@ void warriorList::remove() {
 	if (!t) {
 		printItemDot();
 		cout << "未找到应删除的武将";
+		cout << endl;
 		return;
 	}
 	//第一个是要删除的武将
@@ -200,6 +203,52 @@ void warriorList::remove() {
 		delete t;
 	}
 	num--;//总武将个数减少
+}
+
+//批量删除
+void warriorList::moreRemove() {
+	printDividerStar();
+	cout << endl;
+	cout << "当前为批量删除" << endl;
+	int numDelet;
+	cout << "请输入要删除的武将数量" << endl;
+	cin >> numDelet;
+	while (numDelet != 0) {
+		string tempName;
+		cout << "请输入武将姓名:";
+		cin >> tempName;
+		warrior* t = first;
+		warrior* p = NULL;
+		while (t) {
+			if (t->name == tempName)
+				break;
+			p = t;
+			t = t->next;
+		}
+		//t最后为空
+		if (!t) {
+			printItemDot();
+			cout << "未找到应删除的武将";
+			cout << endl;
+			return;
+		}
+//第一个是要删除的武将
+if (!p) {
+	first = first->next;
+	printItemDot();
+	cout << "成功删除" << tempName << endl;
+	delete t;
+}
+else {
+	//把t的下一个地址给p继续查找
+	p->next = t->next;
+	printItemDot();
+	cout << "成功删除" << tempName << endl;
+	delete t;
+}
+num--;//总武将个数减少
+numDelet--;//要删除总数减少
+	}
 }
 
 //通过名字搜索武将
@@ -220,7 +269,7 @@ void warriorList::searchByName() {
 		}
 		t = t->next;
 	}
-	
+
 	//t到最后为空
 	if (!p[0]) {
 		printItemDot();
@@ -231,7 +280,7 @@ void warriorList::searchByName() {
 		cout << "已查询到武将";
 		printShortStar();
 		cout << endl;
-		printWarriorTableFoot();
+		printWarriorTitle();
 		for (int i = 0; i < foundCount; i++) {
 			p[i]->display();
 		}
@@ -241,44 +290,162 @@ void warriorList::searchByName() {
 
 //模糊搜索
 void warriorList::fuzzySearch() {
-	string tempKey;
 	warrior* t = first;
-	warrior* p[] = { NULL };
+	warrior* p[9999] = { NULL };
 	int foundCount = 0;
-	printDividerStar();
-	cout << endl;
-	cout << "请输入需要查找武将的关键字" << endl;
-	cout << "将输出符合首部开始2个字符相同及以上的武将" << endl;
-	cin >> tempKey;
-	unsigned int keyLength = tempKey.size();
-	while (t) {
-		if (t->name[0] == tempKey[0]&&t->name[1]==tempKey[1]) {
-			p[foundCount] = t;
-			foundCount++;
-		}
-		t = t->next;
-	}
-
-	//t到最后为空
-	if (!p[0]) {
-		printItemDot();
-		cout << "未能找到武将" << endl;
-		return;
-	}
-	else {
-		cout << "已查询到武将";
-		printShortStar();
+	cout << "请输入需要模糊查找的方式" << endl;
+	cout << "1.通过智力查找" << endl;
+	cout << "2.通过体力查找" << endl;
+	cout << "3.通过年龄查找" << endl;
+	cout << "4.通过力量查找" << endl;
+	int chooseWay; cin >> chooseWay;
+	int max, min = 0;
+	if (chooseWay == 1) {
+		int foundCount = 0;
+		cout << "请输入范围最大与最小值" << endl;
+		cout << "最大值:"; cin >> max;
+		cout << "最小值:"; cin >> min;
+		printDividerStar();
 		cout << endl;
-		printWarriorTableFoot();
-		for (int i = 0; i < foundCount; i++) {
-			p[i]->display();
+		while (t) {
+			if ((t->intel) <=max &&( t->intel) >= min) {
+				p[foundCount] = t;
+				foundCount++;
+				t = t->next;
+			}
+			else {
+				t = t->next;
+			}
 		}
-		printWarriorTableFoot();
+
+		//t到最后为空
+		if (!p[0]) {
+			printItemDot();
+			cout << "未能找到武将" << endl;
+			return;
+		}
+		else {
+			cout << "已查询到武将"<<endl;
+			printShortStar();
+			cout << endl;
+			printWarriorTitle();
+			for (int i = 0; i < foundCount; i++) {
+				p[i]->display();
+			}
+			printWarriorTableFoot();
+		}
+	}
+	else if (chooseWay == 2) {
+		int foundCount = 0;
+		cout << "请输入范围最大与最小值" << endl;
+		cout << "最大值:"; cin >> max;
+		cout << "最小值:"; cin >> min;
+		printDividerStar();
+		cout << endl;
+		while (t) {
+			if ((t->phy) <= max &&( t->phy) >= min) {
+				p[foundCount] = t;
+				foundCount++;
+				t = t->next;
+			}
+			else {
+				t = t->next;
+			}
+		}
+
+		//t到最后为空
+		if (!p[0]) {
+			printItemDot();
+			cout << "未能找到武将" << endl;
+			return;
+		}
+		else {
+			cout << "已查询到武将"<<endl;
+			printShortStar();
+			cout << endl;
+			printWarriorTitle();
+			for (int i = 0; i < foundCount; i++) {
+				p[i]->display();
+			}
+			printWarriorTableFoot();
+		}
+	}
+	else if (chooseWay == 3) {
+		int foundCount = 0;
+		cout << "请输入范围最大与最小值" << endl;
+		cout << "最大值:"; cin >> max;
+		cout << "最小值:"; cin >> min;
+		printDividerStar();
+		cout << endl;
+		while (t) {
+			if ((t->age )<= max &&( t->age) >= min) {
+				p[foundCount] = t;
+				foundCount++;
+				t = t->next;
+			}
+			else {
+				t = t->next;
+			}
+		}
+
+		//t到最后为空
+		if (!p[0]) {
+			printItemDot();
+			cout << "未能找到武将" << endl;
+			return;
+		}
+		else {
+			cout << "已查询到武将" << endl;
+			printShortStar();
+			cout << endl;
+			printWarriorTitle();
+			for (int i = 0; i < foundCount; i++) {
+				p[i]->display();
+			}
+			printWarriorTableFoot();
+
+		}
+	}
+	else if (chooseWay == 4) {
+	int foundCount = 0;
+		cout << "请输入范围最大与最小值" << endl;
+		cout << "最大值:"; cin >> max;
+		cout << "最小值:"; cin >> min;
+		printDividerStar();
+		cout << endl;
+		while (t) {
+			if ((t->str)<= max &&( t->str) >= min) {
+				p[foundCount] = t;
+				foundCount++;
+				t = t->next;
+			}
+			else
+			{
+				t = t->next;
+			}
+		}
+
+		//t到最后为空
+		if (!p[0]) {
+			printItemDot();
+			cout << "未能找到武将" << endl;
+			return;
+		}
+		else {
+			cout << "已查询到武将";
+			printShortStar();
+			cout << endl;
+			printWarriorTitle();
+			for (int i = 0; i < foundCount; i++) {
+				p[i]->display();
+			}
+			printWarriorTableFoot();
+		}
 	}
 }
 
 //通过年龄排序
-void warriorList::sortByAge() {
+void warriorList::sortByAge(){
 	warrior* t = first;
 	warrior* p = NULL;
 
@@ -298,7 +465,7 @@ void warriorList::sortByAge() {
 		}
 	}
 
-	cout << "已按年龄排序";
+	cout << "已按年龄排序"<<endl;
 	printShortStar();
 	cout << endl;
 	war.show();
@@ -325,7 +492,7 @@ void warriorList::sortByPhy() {
 		}
 	}
 
-	cout << "已按体力排序";
+	cout << "已按体力排序"<<endl;
 	printShortStar();
 	cout << endl;
 	war.show();
@@ -352,7 +519,7 @@ void warriorList::sortByIntel() {
 		}
 	}
 
-	cout << "已按智力排序";
+	cout << "已按智力排序"<<endl;
 	printShortStar();
 	cout << endl;
 	war.show();
@@ -377,38 +544,71 @@ void warriorList::sortByStr() {
 				p->swap(t);
 			}
 		}
-
-		cout << "已按力量排序";
+	}
+		cout << "已按力量排序" << endl;
 		printShortStar();
 		cout << endl;
 		war.show();
-	}
 }
 
 //显示所有武将
 void warriorList::show() {
 	printWarriorTableFoot();
+	LASTSTEP:
 	warrior* t = first;
+	int conut_loop = 0;
 	if (t) {
-		for(int count=0;t!=NULL;count++){
-			t->display();
+		pageNum();
+		cout << "目前武将数量:" << num << endl;
+		int chooseWay;
+		cout << "请输入您要浏览的页码:";
+		cin >> chooseWay;
+		printLongStar();
+		cout << endl;
+		cout << "您正在浏览第" << chooseWay << "页武将信息" << endl;
+		printWarriorTitle();
+		cout << endl;
+		int count_choose = (chooseWay-1 )* 10;
+		while (count_choose != 0) {
 			t = t->next;
-			if (count % 10 == 0) {
-				pause();
-				printShortStar();
-				cout << endl;
-			}
+			count_choose--;
 		}
-		/*while (t) {
-			t->display();
-			t = t->next;
-		}*/
+		for (int count = 1; count<=10; count++) {
+			if (t != NULL) {
+				t->display();
+				t = t->next;
+			}
+			if (count == 10)
+			{
+				pause();
+				int chooseID;
+				printLongStar();
+				cout << endl;
+				cout << "请选择选项" << endl;
+				cout << "1.继续输出武将" << endl;
+				cout << "2.退出" << endl;
+				cout << "输入："; 
+				cin >> chooseID;
+				if (chooseID == 1) {
+					goto LASTSTEP;
+				}
+				if (chooseID == 2) {
+					break;
+				}
+				else {
+					cout << "非法输入" << endl;
+					break;
+				}
+				}
+			}
 	}
 	else {
 		printItemDot();
 		cout << "目前无武将信息";
 	}
 	printWarriorTableFoot();
+	cout << endl;
+	printChooseMenu();
 }
 
 //文件流保存武将
@@ -416,8 +616,15 @@ void warriorList::save() {
 	warrior* t = first;
 	out.open("warData.txt");
 	for (; t != NULL; t = t->next)
-		out << t->name << " " << t->age << " " << t->phy << " " << t->intel << " " << t->str<<'\n';
+		out << t->name << "\t" << t->age << "\t" << t->phy << "\t" << t->intel << "\t" << t->str<<'\n';
 	out.close();
+}
+
+//页数打印
+void warriorList::pageNum() {
+	int pageNum;
+	pageNum = num / 10+1;
+	cout << "当前共" << pageNum << "页" << endl;
 }
 
 warriorList::~warriorList()
@@ -428,7 +635,6 @@ warriorList::~warriorList()
 //输出暂停
 void pause() {
 	system("pause");
-	cout << "敲击任意键将继续输出" << endl;
 }
 
 //添加武将相关
@@ -441,10 +647,19 @@ void createWarrior() {
 
 //删除相关
 void deleteWarrior() {
-	war.remove();
+	char chooseId;
+	printShortStar();
+	cout << endl;
+	cout << "请选择删除方式" << endl;
+	printShortStar();
+	cout << endl;
+	cout << "1.精准删除" << endl;
+	cout << "2.批量删除" << endl;
+	cin >> chooseId;
+	switchDeleteFun(chooseId);
 }
 
-//显示相关
+//显示相关(gai
 void showWarrior() {
 	cout << "显示所有武将信息";
 	printShortStar();
@@ -484,6 +699,26 @@ void searchWarrior() {
 	switchSearchFun(chooseId);
 }
 
+//删除排序
+void switchDeleteFun(char choosId) {
+	switch (choosId)
+	{
+	case '1':
+		//名字删除
+		war.remove();
+		break;
+	case '2':
+		//批量删除
+		war.moreRemove();
+		break;
+	default:
+		cout << "错误输入" << endl;
+		cout << "请重新输入" << endl;
+		cin >> choosId;
+		switchDeleteFun(choosId);
+	}
+}
+
 //寻找排序
 void switchSearchFun(char chooseId)
 {
@@ -494,6 +729,7 @@ void switchSearchFun(char chooseId)
 		war.searchByName();
 		break;
 	case '2':
+		//关键字模糊搜索
 		war.fuzzySearch();
 		break;
 	default:
@@ -503,6 +739,7 @@ void switchSearchFun(char chooseId)
 		switchSearchFun(chooseId);
 	}
 }
+
 //切换排序
 void switchSortFun(char chooseId) {
 	switch (chooseId)
@@ -534,10 +771,11 @@ void switchSortFun(char chooseId) {
 void printWarriorTitle() {
 	cout << endl;
 	cout << "--------------------------武将列表-------------------------" << endl;
-	cout << "名字" << " " << "年龄" << " " << "体力" << " " << "智力" << " " << "力量" << endl;
+	cout << "名字" << "\t" << "年龄" << "\t" << "体力" << "\t" << "智力" << "\t" << "力量" << endl;
 }
 
 void printWarriorTableFoot() {
+	cout << endl;
 	cout << "--------------------------输出结束-------------------------";
 	cout << endl;
 }

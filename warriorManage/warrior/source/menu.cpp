@@ -2,7 +2,7 @@
 using namespace std;
 //输出分离
 void printDividerStar() {
-	cout <<"********************************************";
+	cout <<"************************************************************";
 }
 //输出短
 void printShortStar() {
@@ -46,14 +46,15 @@ void printChooseMenu() {
 	cout << "\t\t0 退出系统\t\t" << endl;
 	printDividerStar();
 	cout << endl;
-	printDividerStar();
-	cout << endl;
 	//输入操作
 	printItemDot();
 	cout << "输入你想完成的操作:";
 	cin >> chooseId;
+	printDividerStar();
+	cout << endl;
 	switchFunction(chooseId);
 }
+
 //小界面
 void printMiniMenu() {
 	char chooseId;
